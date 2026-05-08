@@ -1,0 +1,41 @@
+# Local tooling
+.codex/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Dependency and build output
+backend/node_modules/
+backend/dist/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Generated and runtime data
+backend/downloads/
+backend/bin/
+backend/info.json
+medicraft_downloads/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS and editor files
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# TypeScript cache
+*.tsbuildinfo

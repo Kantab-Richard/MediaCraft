@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  password  String
+  isAdmin   Boolean  @default(false)
+  isBlocked Boolean  @default(false)
+  apiKeys   ApiKey[]
+  projects  Project[]
+  downloads Download[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id          String     @id @default(uuid())
+  name        String
+  description String?
+  color       String?    @default("#f97316")
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  downloads   Download[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([userId, createdAt])
+}
+
+enum DownloadStatus {
+  PENDING
+  DOWNLOADING
+  CONVERTING
+  COMPLETED
+  FAILED
+  EXPIRED
+}
+
+enum Downloaders {
+  YOUTUBE
+  FACEBOOK
+  INSTAGRAM
+  PINTEREST
+  TIKTOK
+  TWITTER
+}
+
+model ApiKey {
+  id          String    @id @default(uuid())
+  key         String    @unique // Format: dk_...
+  name        String    @default("Default Key")
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  rateLimit   Int       @default(100)
+  maxDuration Int       @default(1800)
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  ipWhitelist String[]
+  isBlocked   Boolean   @default(false)
+  blockReason String?
+  createdAt   DateTime  @default(now())
+}
+
+model Download {
+  id           String         @id @default(uuid())
+  originalUrl  String
+  filename     String
+  status       DownloadStatus @default(PENDING)
+  downloader   Downloaders
+  user         User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId       String?
+  project      Project?       @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  projectId    String?
+  downloadUrl  String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([projectId, createdAt])
+}

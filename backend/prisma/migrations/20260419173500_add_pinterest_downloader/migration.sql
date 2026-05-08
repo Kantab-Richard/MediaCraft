@@ -1,0 +1,6 @@
+DO $$
+BEGIN
+  ALTER TYPE "Downloaders" ADD VALUE 'PINTEREST';
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
